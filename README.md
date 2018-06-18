@@ -1,5 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
+[![Travis build status](https://travis-ci.com/martakarass/convo.svg?branch=master)](https://travis-ci.com/martakarass/convo)
+
 convo
 =====
 
