@@ -1,6 +1,6 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
-[![Travis build status](https://travis-ci.com/martakarass/convo.svg?branch=master)](https://travis-ci.com/martakarass/convo)
+[![Travis build status](https://travis-ci.com/martakarass/convo.svg?branch=master)](https://travis-ci.com/martakarass/convo) [![AppVeyor build status](https://ci.appveyor.com/api/projects/status/github/martakarass/convo?branch=master&svg=true)](https://ci.appveyor.com/project/martakarass/convo)
 
 convo
 =====
