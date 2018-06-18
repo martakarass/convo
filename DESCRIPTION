@@ -1,0 +1,25 @@
+Package: convo
+Type: Package
+Title: Fast Computation of Running Sample Statistics 
+Version: 0.1.0
+Authors@R: c(
+  person("Marta", "Karas", email = "mkaras2@jhu.edu", role = c("aut", "cre"))
+  )
+Description: Provides methods for fast computation of running (aka rolling) 
+    sample statistics. These include running sample mean of a 
+    single numeric sequence, running sample variance of a single numeric 
+    sequence, running sample covariance of two numeric sequences. 
+    Implementation of the methods uses convolution via Fast Fourier 
+    Transform. From Convolution Theorem, the complexity of the 
+    convolution can be reduced from O(n^{2}) to O(n\log n) 
+    with fast Fourier transform compared to conventional computation. 
+License: GPL-3
+Imports: 
+    stats
+Encoding: UTF-8
+LazyData: true
+RoxygenNote: 6.0.1
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

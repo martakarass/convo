@@ -1,0 +1,431 @@
+
+
+
+#' @title
+#' Fast Sequences Convolution
+#'
+#' @description
+#' Computes convolutions of two sequences via Fast Fourier Transform
+#'
+#' @details
+#' Use the Fast Fourier Transform to compute convolutions of two sequences.
+#' If sequences are of different length, the shorter one get a suffix of 0's.
+#' Following convention of \code{stats::convolve} function, if
+#' \code{r <- convolve(x, y, type = "open")} and
+#' \code{n <- length(x)},
+#' \code{m <- length(y)},
+#' then
+#' \deqn{r[k] = \sum_i x[k-m+i] \cdot y[i])}
+#' where the sum is over all valid indices \eqn{i}.
+#'
+#' FFT formulation is useful for implementing an efficient numerical
+#' convolution: the standard convolution algorithm has quadratic
+#' computational complexity. From convolution theorem, the complexity of the
+#' convolution can be reduced from
+#' \eqn{O(n^{2})} to  \eqn{O(n\log n)} with fast Fourier transform.
+#'
+#' @param x numeric sequence
+#' @param y numeric sequence, of equal or shorter length than  \code{x} sequence
+#'
+#' @return numeric sequence
+#'
+#' @examples \dontrun{
+#' x <- sin(seq(0, 1, length.out = 1000) * 2 * pi * 6)
+#' y <- rep(1, 100)
+#' convJU(x, y)
+#' }
+#'
+convJU <- function(x, y){
+
+  N1 <- length(x)
+  N2 <- length(y)
+  if (N2 > N1) stop("y must be of shorter of equal length than x")
+
+  xz <- x
+  yz <- append(y, rep(0, N1 - N2))
+
+  cxy <- convolve(xz, yz)
+  cxy <- cxy[1:N1]
+
+  return(cxy)
+}
+
+
+
+
+
+#' @title
+#' Fast Running Mean Computation
+#'
+#' @description
+#' Computes running sample mean of a sequence in a fixed width window. Uses
+#' convolution via Fast Fourier Transform.
+#'
+#' @details
+#' Parameter \code{circular} determines whether \code{x} sequence is assumed to have a  circular nature. Assume \eqn{l_x} is the length of sequence \code{x}, \code{W} is a fixed length of code{x} sequence window.
+#' * If \code{circular} equals \code{TRUE}, then the output sequence has length equal to the length of \code{x} sequence. First element of the output sequence corresponds to sample mean of \code{x[1:W]} window of  \code{x} sequence.  Last  element of the output sequence corresponds to sample mean of \code{x[(l_x):(W - 1)]} window of  \code{x} sequence.
+#' * If \code{circular} equals \code{FALSE}, then the output sequence has length equal to  \eqn{l_x - W + 1}. First element of the output sequence corresponds to sample mean of  \code{x[1:W]} window of  \code{x} sequence. Last  element of the output sequence corresponds to sample mean of \code{x[(l_x - W + 1):l_x]} window of  \code{x} sequence.
+#'
+#' @param x numeric sequence
+#' @param W numeric; width of \code{x} sequence window
+#' @param circular logical; whether running sample mean is computed assuming
+#' circular nature of  \code{x} sequence (see Details)
+#'
+#' @return numeric sequence
+#'
+#' @examples
+#' x <- rnorm(1000)
+#' RunningMean(x, 100)
+#' length(RunningMean(x, 100, circular = FALSE))
+#' length(RunningMean(x, 100, circular = TRUE))
+#'
+#' @export
+#'
+RunningMean <- function(x, W, circular = FALSE){
+
+  ## constant value=1 segment
+  win <- rep(1, W)
+
+  ## mean of x (running mean)
+  meanx <- convJU(x, win)/W
+
+  ## trim outout tail if not circular
+  if (!circular) meanx <- meanx[1 : (length(x) - W + 1)]
+
+  return(meanx)
+}
+
+
+
+#' @title
+#' Fast Running Variance Computation
+#'
+#' @description
+#' Computes running sample variance of a sequence in a fixed width window. Uses
+#' convolution via Fast Fourier Transform.
+#'
+#' @details
+#' Parameter \code{circular} determines whether \code{x} sequence is assumed to have a  circular nature. Assume \eqn{l_x} is the length of sequence \code{x}, \code{W} is a fixed length of code{x} sequence window.
+#' * If \code{circular} equals \code{TRUE}, then the output sequence has length equal to the length of \code{x} sequence. First element of the output sequence corresponds to sample variance of \code{x[1:W]} window of  \code{x} sequence.  Last  element of the output sequence corresponds to sample variance of \code{x[(l_x):(W - 1)]} window of  \code{x} sequence.
+#' * If \code{circular} equals \code{FALSE}, then the output sequence has length equal to  \eqn{l_x - W + 1}. First element of the output sequence corresponds to sample variance of  \code{x[1:W]} window of  \code{x} sequence. Last  element of the output sequence corresponds to sample variance of \code{x[(l_x - W + 1):l_x]} window of  \code{x} sequence.
+#'
+#' @param x numeric sequence
+#' @param W numeric; width of \code{x} sequence window
+#' @param circular logical; whether running sample variance is computed assuming
+#' circular nature of  \code{x} sequence (see Details)
+#'
+#' @return numeric sequence
+#'
+#' @examples
+#' x <- rnorm(1000)
+#' RunningVar(x, 100)
+#' length(RunningVar(x, 100, circular = FALSE))
+#' length(RunningVar(x, 100, circular = TRUE))
+#'
+#' @export
+#'
+RunningVar <- function(x, W, circular = FALSE){
+
+  ## constant value=1 segment
+  win <- rep(1, W)
+
+  # unbiased estimator of variance given as
+  # S^2 = \frac{\sum X^2 - \frac{(\sum X)^2}{N}}{N-1}
+  sigmax2 <- (convJU(x^2, win) - ((convJU(x, win))^2)/W)/(W - 1)
+
+  ## correct numerical errors, if any
+  sigmax2[sigmax2 < 0] <- 0
+
+  ## trim outout tail if not circular
+  if (!circular) sigmax2 <- sigmax2[1 : (length(x) - W + 1)]
+
+  return(sigmax2)
+}
+
+
+
+
+#' @title
+#' Fast Running Standard Deviation Computation
+#'
+#' @description
+#' Computes running sample standard deviation of a sequence in a fixed width window. Uses
+#' convolution via Fast Fourier Transform.
+#'
+#' @details
+#' Parameter \code{circular} determines whether \code{x} sequence is assumed to have a  circular nature. Assume \eqn{l_x} is the length of sequence \code{x}, \code{W} is a fixed length of code{x} sequence window.
+#' * If \code{circular} equals \code{TRUE}, then the output sequence has length equal to the length of \code{x} sequence. First element of the output sequence corresponds to sample standard deviation of \code{x[1:W]} window of  \code{x} sequence.  Last  element of the output sequence corresponds to sample standard deviation of \code{x[(l_x):(W - 1)]} window of  \code{x} sequence.
+#' * If \code{circular} equals \code{FALSE}, then the output sequence has length equal to  \eqn{l_x - W + 1}. First element of the output sequence corresponds to sample standard deviation of  \code{x[1:W]} window of  \code{x} sequence. Last  element of the output sequence corresponds to sample standard deviation of \code{x[(l_x - W + 1):l_x]} window of  \code{x} sequence.
+#'
+#' @param x numeric sequence
+#' @param W numeric; width of \code{x} sequence window
+#' @param circular logical; whether  running sample standard deviation is computed assuming
+#' circular nature of  \code{x} sequence (see Details)
+#'
+#' @return numeric sequence
+#'
+#' @examples
+#' x <- rnorm(1000)
+#' RunningSd(x, 100)
+#' length(RunningSd(x, 100, circular = FALSE))
+#' length(RunningSd(x, 100, circular = TRUE))
+#'
+#' @export
+#'
+RunningSd <- function(x, W, circular = FALSE){
+
+  sigmax2 <- RunningVar(x, W, circular)
+  sigmax  <- sqrt(sigmax2)
+
+  return(sigmax)
+}
+
+
+
+
+#' @title
+#' Fast Running Covariance Computation
+#'
+#' @description
+#' Computes running covariance between two sequences in a fixed width window,
+#' whose length corresponds to the length of the shorter sequence.  Uses
+#' convolution via Fast Fourier Transform.
+#'
+#' @details
+#' Computes running covariance between two sequences in a fixed width window.
+#' The length of a window is equal to the shorter of the two sequences (\code{y}), and window
+#' "runs" over the length of longer sequence (\code{x}).
+#'
+#' Parameter \code{circular} determines whether \code{x} sequence is assumed to
+#' have a  circular nature. Assume \eqn{l_x} is the length of longer sequence \code{x}, \eqn{l_y} is the length of shorter sequence \code{y}.
+#' * If \code{circular} equals \code{TRUE}, then the output sequence has length equal to the length of \code{x} sequence. First element of the output sequence corresponds to covariance between \code{x[1:l_y]} window of  \code{x} sequence and \code{y} sequence.  Last  element of the output sequence corresponds to covariance between \code{x[(l_x):(l_y - 1)]} window of  \code{x} sequence and \code{y} sequence.
+#' * If \code{circular} equals \code{FALSE}, then the output sequence has length equal to  \eqn{l_x - l_y + 1}. First element of the output sequence corresponds to covariance between \code{x[1:l_y]} window of  \code{x} sequence and \code{y} sequence. Last  element of the output sequence corresponds to covariance between \code{x[(l_x - l_y + 1):l_x]} window of  \code{x} sequence and \code{y} sequence.
+#'
+#' @param x numeric sequence
+#' @param y numeric sequence, of equal or shorter length than  \code{x} sequence
+#' @param circular logical; whether  running variance is computed assuming
+#' circular nature of  \code{x} sequence (see Details)
+#'
+#' @return numeric sequence
+#' @import stats
+#'
+#' @examples
+#' x <- sin(seq(0, 1, length.out = 1000) * 2 * pi * 6)
+#' y <- x[1:100]
+#' out1 <- RunningCov(x, y, circular = TRUE)
+#' out2 <- RunningCov(x, y, circular = FALSE)
+#' plot(out1, type = "l"); points(out2, col = "red")
+#'
+#' @export
+#'
+RunningCov = function(x, y, circular = FALSE){
+
+  if (length(x) < length(y)) stop("Vector x should be no shorter than vector y")
+
+  ## constant value=1 segment of length equal to length of vector y
+  W   <- length(y)
+  win <- rep(1, W)
+
+  ## mean of x (running mean), mean of y
+  meanx <- convJU(x, win)/W
+  meany <- mean(y)
+
+  ## unbiased estimator of sample covariance
+  covxy <- (convJU(x, y) - W * meanx * meany)/(W - 1)
+
+  ## trim outout tail if not circular
+  if (!circular) covxy <- covxy[1 : (length(x) - W + 1)]
+
+  return(covxy)
+}
+
+
+
+
+#' @title
+#' Fast Running Correlation Computation
+#'
+#' @description
+#' Computes running correlation between two sequences in a fixed width window,
+#' whose length corresponds to the length of the shorter sequence.  Uses
+#' convolution via Fast Fourier Transform.
+#'
+#' @details
+#' Computes running correlation between two sequences in a fixed width window.
+#' The length of a window is equal to the shorter of the two sequences (\code{y}), and window
+#' "runs" over the length of longer sequence (\code{x}).
+#'
+#' Parameter \code{circular} determines whether \code{x} sequence is assumed to
+#' have a  circular nature. Assume \eqn{l_x} is the length of longer sequence \code{x}, \eqn{l_y} is the length of shorter sequence \code{y}.
+#' * If \code{circular} equals \code{TRUE}, then the output sequence has length equal to the length of \code{x} sequence. First element of the output sequence corresponds to correlation between \code{x[1:l_y]} window of  \code{x} sequence and \code{y} sequence.  Last  element of the output sequence corresponds to correlation between \code{x[(l_x):(l_y - 1)]} window of  \code{x} sequence and \code{y} sequence.
+#' * If \code{circular} equals \code{FALSE}, then the output sequence has length equal to  \eqn{l_x - l_y + 1}. First element of the output sequence corresponds to correlation between \code{x[1:l_y]} window of  \code{x} sequence and \code{y} sequence. Last  element of the output sequence corresponds to correlation between \code{x[(l_x - l_y + 1):l_x]} window of  \code{x} sequence and \code{y} sequence.
+#'
+#' @param x numeric sequence
+#' @param y numeric sequence, of equal or shorter length than  \code{x} sequence
+#' @param circular logical; whether  running correlation is computed assuming
+#' circular nature of  \code{x} sequence (see Details)
+#'
+#' @return numeric sequence
+#'
+#' @examples
+#' x <- sin(seq(0, 1, length.out = 1000) * 2 * pi * 6)
+#' y <- x[1:100]
+#' out1 <- RunningCorr(x, y, circular = TRUE)
+#' out2 <- RunningCorr(x, y, circular = FALSE)
+#' plot(out1, type = "l"); points(out2, col = "red")
+#'
+#' @export
+#'
+RunningCorr = function(x, y, circular = FALSE){
+
+  if (length(x) < length(y)) stop("Vector x should be no shorter than vector y")
+
+  ## unbiased estimator of sample covariance
+  covxy <- RunningCov(x, y, circular)
+
+  ## sigma x (running sigma), sigma y
+  W <- length(y)
+  sigmax <- RunningSd(x, W, circular)
+  sigmay <- sd(y)
+
+  ## cor(x,y)
+  corxy <- covxy/(sigmax * sigmay)
+  corxy[sigmax == 0] <- 0
+  corxy[corxy > 1] <- 1
+
+  return(corxy)
+}
+
+
+
+
+#' @title
+#' Fast Running L2 Norm Computation
+#'
+#' @description
+#' Computes running L2 norm between two sequences in a fixed width window,
+#' whose length corresponds to the length of the shorter sequence.  Uses
+#' convolution via Fast Fourier Transform.
+#'
+#' @details
+#' Computes running  L2 norm between two sequences in a fixed width window.
+#' The length of a window is equal to the shorter of the two sequences (\code{y}), and window
+#' "runs" over the length of longer sequence (\code{x}).
+#'
+#' Parameter \code{circular} determines whether \code{x} sequence is assumed to
+#' have a  circular nature. Assume \eqn{l_x} is the length of longer sequence \code{x}, \eqn{l_y} is the length of shorter sequence \code{y}.
+#' * If \code{circular} equals \code{TRUE}, then the output sequence has length equal to the length of \code{x} sequence. First element of the output sequence corresponds to  L2 norm  between \code{x[1:l_y]} window of  \code{x} sequence and \code{y} sequence.  Last  element of the output sequence corresponds to  L2 norm  between \code{x[(l_x):(l_y - 1)]} window of  \code{x} sequence and \code{y} sequence.
+#' * If \code{circular} equals \code{FALSE}, then the output sequence has length equal to  \eqn{l_x - l_y + 1}. First element of the output sequence corresponds to  L2 norm  between \code{x[1:l_y]} window of  \code{x} sequence and \code{y} sequence. Last  element of the output sequence corresponds to  L2 norm  between \code{x[(l_x - l_y + 1):l_x]} window of  \code{x} sequence and \code{y} sequence.
+#'
+#' @param x numeric sequence
+#' @param y numeric sequence, of equal or shorter length than  \code{x} sequence
+#' @param circular logical; whether  running  L2 norm  is computed assuming
+#' circular nature of  \code{x} sequence (see Details)
+#'
+#' @return numeric sequence
+#'
+#' @examples
+#' x <- sin(seq(0, 1, length.out = 1000) * 2 * pi * 6)
+#' y1 <- x[1:100] + rnorm(100)
+#' y2 <- rnorm(100)
+#' out1 <- RunningL2Norm(x, y1)
+#' out2 <- RunningL2Norm(x, y2)
+#' plot(out1, type = "l"); points(out2, col = "blue")
+#'
+#' @export
+#'
+RunningL2Norm <- function(x, y, circular = FALSE){
+
+  N1 <- length(x)
+  N2 <- length(y)
+
+  xz <- append(x, rep(0, nextn(N1, 2) - N1))
+  yz <- append(y, rep(0, nextn(N1, 2) - N2))
+
+  m <- rep(0, length(xz))
+  m[1:N2] <- 1
+
+  xfft <- fft(xz)
+  yfft <- fft(yz)
+
+  d <- sqrt(Re(fft(fft(xz^2) * Conj(fft(m)), inverse = T))/length(xz) +
+              sum(y^2) - 2 * Re(fft(fft(xz) * Conj(fft(yz)), inverse = T))/length(xz))
+  d <- d[1:N1]
+
+  ## trim outout tail if not circular
+  if (!circular) d <- d[1 : (length(x) - length(y) + 1)]
+
+  return(d)
+}
+
+
+
+
+
+#' @title
+#' Bandpass Digital Filter
+#'
+#' @description
+#' Passes frequencies within a certain range and rejects (attenuates) frequencies
+#' outside that range.
+#'
+#' @param x numeric sequence
+#' @param fs sampling frequency of numeric sequence \code{x}
+#' @param LD lower passband frequency
+#' @param LU higher passband frequency
+#'
+#' @examples
+#' ## generate components of signal x
+#' fs <- 1000
+#' t.seq <- seq(0, 1, length.out = 1000)
+#' x1 <- sin(2 * pi * t.seq * 50)
+#' x2 <- sin(2 * pi * t.seq * 150)
+#' x3 <- sin(2 * pi * t.seq * 250)
+#' x0 <- rnorm(length(t.seq), sd = 0.1)
+#' plot(x0, ylim = range(c(x0, x1, x2, x3)), main = "x components")
+#' lines(x1, col = "blue")
+#' lines(x2, col = "red")
+#' lines(x3, col = "green")
+#' ## generate signal x
+#' x <- x1 + x2 + x3 + x0
+#' plot(x, main = "x", type = "l")
+#' ## use filter with passband frequencies [100 Hz, 200 Hz]
+#' x.filtered <- DigFilter(x, 1000, 100, 200)
+#' plot(x.filtered, type = "l", main = "x filtered with [100 Hz, 200 Hz] frequency bandpass")
+#' plot(x2, type = "l", main = "compare: x2 component of x")
+#'
+#' @export
+#'
+DigFilter = function(x, fs, LD, LU){
+
+  x[is.na(x)] <- 0
+  N0 <- length(x)
+  Nz <- 2^ceiling(log2(N0))
+  x <- c(x, rep(0, Nz - N0)) # zero padding   df = fs/N
+
+  df <- fs/Nz
+
+  fft_x <- fft(x)
+  fft_mask <- rep(0, Nz)
+  fft_mask[ceiling(LD/df):ceiling(LU/df)] <- 2
+  fft_mask[1] <- 1
+
+  xf <- Re(fft(fft_x * fft_mask, inverse = T))/Nz
+  xf <- xf[1:N0]
+
+  return(xf)
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
