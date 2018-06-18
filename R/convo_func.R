@@ -29,6 +29,8 @@
 #'
 #' @return numeric sequence
 #'
+#' @keywords internal
+#'
 #' @examples \dontrun{
 #' x <- sin(seq(0, 1, length.out = 1000) * 2 * pi * 6)
 #' y <- rep(1, 100)
