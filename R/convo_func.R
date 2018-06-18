@@ -371,8 +371,8 @@ RunningL2Norm <- function(x, y, circular = FALSE){
 #'
 #' @param x numeric sequence
 #' @param fs sampling frequency of numeric sequence \code{x}
-#' @param LD lower passband frequency
-#' @param LU higher passband frequency
+#' @param LD lower bandpass frequency
+#' @param LU higher bandpass frequency
 #'
 #' @examples
 #' ## generate components of signal x

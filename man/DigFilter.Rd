@@ -11,9 +11,9 @@ DigFilter(x, fs, LD, LU)
 
 \item{fs}{sampling frequency of numeric sequence \code{x}}
 
-\item{LD}{lower passband frequency}
+\item{LD}{lower bandpass frequency}
 
-\item{LU}{higher passband frequency}
+\item{LU}{higher bandpass frequency}
 }
 \description{
 Passes frequencies within a certain range and rejects (attenuates) frequencies
