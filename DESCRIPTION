@@ -3,7 +3,8 @@ Type: Package
 Title: Fast Computation of Running Sample Statistics 
 Version: 0.1.0
 Authors@R: c(
-  person("Marta", "Karas", email = "mkaras2@jhu.edu", role = c("aut", "cre"))
+  person("Marta", "Karas", email = "mkaras2@jhu.edu", role = c("aut", "cre")),
+  person("Jacek", "Urbanek", role = c("aut"))
   )
 Description: Provides methods for fast computation of running (aka rolling) 
     sample statistics. These include running sample mean of a 
