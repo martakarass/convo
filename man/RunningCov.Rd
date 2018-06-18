@@ -27,10 +27,21 @@ Computes running covariance between two sequences in a fixed width window.
 The length of a window is equal to the shorter of the two sequences (\code{y}), and window
 "runs" over the length of longer sequence (\code{x}).
 
-Parameter \code{circular} determines whether \code{x} sequence is assumed to
-have a  circular nature. Assume \eqn{l_x} is the length of longer sequence \code{x}, \eqn{l_y} is the length of shorter sequence \code{y}.
-* If \code{circular} equals \code{TRUE}, then the output sequence has length equal to the length of \code{x} sequence. First element of the output sequence corresponds to covariance between \code{x[1:l_y]} window of  \code{x} sequence and \code{y} sequence.  Last  element of the output sequence corresponds to covariance between \code{x[(l_x):(l_y - 1)]} window of  \code{x} sequence and \code{y} sequence.
-* If \code{circular} equals \code{FALSE}, then the output sequence has length equal to  \eqn{l_x - l_y + 1}. First element of the output sequence corresponds to covariance between \code{x[1:l_y]} window of  \code{x} sequence and \code{y} sequence. Last  element of the output sequence corresponds to covariance between \code{x[(l_x - l_y + 1):l_x]} window of  \code{x} sequence and \code{y} sequence.
+Parameter \code{circular} determines whether \code{x} sequence is assumed to have a  circular nature. Assume \eqn{l_x} is the length of sequence \code{x}, \eqn{l_y} is the length of shorter sequence \code{y}.
+
+  If \code{circular} equals \code{TRUE} then
+  \itemize{
+    \item output sequence length equals \eqn{l_x},
+    \item first element of the output sequence corresponds to sample covariance between \code{x[1:l_y]} and \code{y},
+    \item last element of the output sequence corresponds to sample covariance between \code{c(x[l_x], x[1:(l_y - 1)])}  and \code{y}.
+  }
+
+If \code{circular} equals \code{FALSE} then
+  \itemize{
+    \item output sequence length equals \eqn{l_x - l_y + 1},
+    \item first element of the output sequence corresponds to sample covariance between \code{x[1:l_y]} and \code{y},
+    \item last element of the output sequence corresponds to sample covariance between \code{x[(l_x - l_y + 1):l_x]}.
+  }
 }
 \examples{
 x <- sin(seq(0, 1, length.out = 1000) * 2 * pi * 6)

@@ -1,2 +1,0 @@
-#' @rdname convo
-#'

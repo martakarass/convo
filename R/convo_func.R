@@ -64,9 +64,21 @@ convJU <- function(x, y){
 #' convolution via Fast Fourier Transform.
 #'
 #' @details
-#' Parameter \code{circular} determines whether \code{x} sequence is assumed to have a  circular nature. Assume \eqn{l_x} is the length of sequence \code{x}, \code{W} is a fixed length of code{x} sequence window.
-#' * If \code{circular} equals \code{TRUE}, then the output sequence has length equal to the length of \code{x} sequence. First element of the output sequence corresponds to sample mean of \code{x[1:W]} window of  \code{x} sequence.  Last  element of the output sequence corresponds to sample mean of \code{x[(l_x):(W - 1)]} window of  \code{x} sequence.
-#' * If \code{circular} equals \code{FALSE}, then the output sequence has length equal to  \eqn{l_x - W + 1}. First element of the output sequence corresponds to sample mean of  \code{x[1:W]} window of  \code{x} sequence. Last  element of the output sequence corresponds to sample mean of \code{x[(l_x - W + 1):l_x]} window of  \code{x} sequence.
+#' Parameter \code{circular} determines whether \code{x} sequence is assumed to have a  circular nature. Assume \eqn{l_x} is the length of sequence \code{x}, \code{W} is a fixed length of \code{x} sequence window.
+#'
+#' If \code{circular} equals \code{TRUE} then
+#'   \itemize{
+#'     \item output sequence length equals \eqn{l_x},
+#'     \item first element of the output sequence corresponds to sample mean of \code{x[1:W]},
+#'     \item last element of the output sequence corresponds to sample mean of \code{c(x[l_x], x[1:(W - 1)])}.
+#'   }
+#'
+#' If \code{circular} equals \code{FALSE} then
+#'   \itemize{
+#'     \item output sequence length equals \eqn{l_x - W + 1},
+#'     \item first element of the output sequence corresponds to sample mean of \code{x[1:W]},
+#'     \item last element of the output sequence corresponds to sample mean of \code{x[(l_x - W + 1):l_x]}.
+#'   }
 #'
 #' @param x numeric sequence
 #' @param W numeric; width of \code{x} sequence window
@@ -107,9 +119,21 @@ RunningMean <- function(x, W, circular = FALSE){
 #' convolution via Fast Fourier Transform.
 #'
 #' @details
-#' Parameter \code{circular} determines whether \code{x} sequence is assumed to have a  circular nature. Assume \eqn{l_x} is the length of sequence \code{x}, \code{W} is a fixed length of code{x} sequence window.
-#' * If \code{circular} equals \code{TRUE}, then the output sequence has length equal to the length of \code{x} sequence. First element of the output sequence corresponds to sample variance of \code{x[1:W]} window of  \code{x} sequence.  Last  element of the output sequence corresponds to sample variance of \code{x[(l_x):(W - 1)]} window of  \code{x} sequence.
-#' * If \code{circular} equals \code{FALSE}, then the output sequence has length equal to  \eqn{l_x - W + 1}. First element of the output sequence corresponds to sample variance of  \code{x[1:W]} window of  \code{x} sequence. Last  element of the output sequence corresponds to sample variance of \code{x[(l_x - W + 1):l_x]} window of  \code{x} sequence.
+#' Parameter \code{circular} determines whether \code{x} sequence is assumed to have a  circular nature. Assume \eqn{l_x} is the length of sequence \code{x}, \code{W} is a fixed length of \code{x} sequence window.
+#'
+#' If \code{circular} equals \code{TRUE} then
+#'   \itemize{
+#'     \item output sequence length equals \eqn{l_x},
+#'     \item first element of the output sequence corresponds to sample variance of \code{x[1:W]},
+#'     \item last element of the output sequence corresponds to sample variance of \code{c(x[l_x], x[1:(W - 1)])}.
+#'   }
+#'
+#' If \code{circular} equals \code{FALSE} then
+#'   \itemize{
+#'     \item output sequence length equals \eqn{l_x - W + 1},
+#'     \item first element of the output sequence corresponds to sample variance of \code{x[1:W]},
+#'     \item last element of the output sequence corresponds to sample variance of \code{x[(l_x - W + 1):l_x]}.
+#'   }
 #'
 #' @param x numeric sequence
 #' @param W numeric; width of \code{x} sequence window
@@ -155,9 +179,21 @@ RunningVar <- function(x, W, circular = FALSE){
 #' convolution via Fast Fourier Transform.
 #'
 #' @details
-#' Parameter \code{circular} determines whether \code{x} sequence is assumed to have a  circular nature. Assume \eqn{l_x} is the length of sequence \code{x}, \code{W} is a fixed length of code{x} sequence window.
-#' * If \code{circular} equals \code{TRUE}, then the output sequence has length equal to the length of \code{x} sequence. First element of the output sequence corresponds to sample standard deviation of \code{x[1:W]} window of  \code{x} sequence.  Last  element of the output sequence corresponds to sample standard deviation of \code{x[(l_x):(W - 1)]} window of  \code{x} sequence.
-#' * If \code{circular} equals \code{FALSE}, then the output sequence has length equal to  \eqn{l_x - W + 1}. First element of the output sequence corresponds to sample standard deviation of  \code{x[1:W]} window of  \code{x} sequence. Last  element of the output sequence corresponds to sample standard deviation of \code{x[(l_x - W + 1):l_x]} window of  \code{x} sequence.
+#' Parameter \code{circular} determines whether \code{x} sequence is assumed to have a  circular nature. Assume \eqn{l_x} is the length of sequence \code{x}, \code{W} is a fixed length of \code{x} sequence window.
+#'
+#' If \code{circular} equals \code{TRUE} then
+#'   \itemize{
+#'     \item output sequence length equals \eqn{l_x},
+#'     \item first element of the output sequence corresponds to sample standard deviation of \code{x[1:W]},
+#'     \item last element of the output sequence corresponds to sample standard deviation of \code{c(x[l_x], x[1:(W - 1)])}.
+#'   }
+#'
+#' If \code{circular} equals \code{FALSE} then
+#'   \itemize{
+#'     \item output sequence length equals \eqn{l_x - W + 1},
+#'     \item first element of the output sequence corresponds to sample standard deviation of \code{x[1:W]},
+#'     \item last element of the output sequence corresponds to sample standard deviation of \code{x[(l_x - W + 1):l_x]}.
+#'   }
 #'
 #' @param x numeric sequence
 #' @param W numeric; width of \code{x} sequence window
@@ -198,10 +234,21 @@ RunningSd <- function(x, W, circular = FALSE){
 #' The length of a window is equal to the shorter of the two sequences (\code{y}), and window
 #' "runs" over the length of longer sequence (\code{x}).
 #'
-#' Parameter \code{circular} determines whether \code{x} sequence is assumed to
-#' have a  circular nature. Assume \eqn{l_x} is the length of longer sequence \code{x}, \eqn{l_y} is the length of shorter sequence \code{y}.
-#' * If \code{circular} equals \code{TRUE}, then the output sequence has length equal to the length of \code{x} sequence. First element of the output sequence corresponds to covariance between \code{x[1:l_y]} window of  \code{x} sequence and \code{y} sequence.  Last  element of the output sequence corresponds to covariance between \code{x[(l_x):(l_y - 1)]} window of  \code{x} sequence and \code{y} sequence.
-#' * If \code{circular} equals \code{FALSE}, then the output sequence has length equal to  \eqn{l_x - l_y + 1}. First element of the output sequence corresponds to covariance between \code{x[1:l_y]} window of  \code{x} sequence and \code{y} sequence. Last  element of the output sequence corresponds to covariance between \code{x[(l_x - l_y + 1):l_x]} window of  \code{x} sequence and \code{y} sequence.
+#' Parameter \code{circular} determines whether \code{x} sequence is assumed to have a  circular nature. Assume \eqn{l_x} is the length of sequence \code{x}, \eqn{l_y} is the length of shorter sequence \code{y}.
+#'
+#'   If \code{circular} equals \code{TRUE} then
+#'   \itemize{
+#'     \item output sequence length equals \eqn{l_x},
+#'     \item first element of the output sequence corresponds to sample covariance between \code{x[1:l_y]} and \code{y},
+#'     \item last element of the output sequence corresponds to sample covariance between \code{c(x[l_x], x[1:(l_y - 1)])}  and \code{y}.
+#'   }
+#'
+#' If \code{circular} equals \code{FALSE} then
+#'   \itemize{
+#'     \item output sequence length equals \eqn{l_x - l_y + 1},
+#'     \item first element of the output sequence corresponds to sample covariance between \code{x[1:l_y]} and \code{y},
+#'     \item last element of the output sequence corresponds to sample covariance between \code{x[(l_x - l_y + 1):l_x]}.
+#'   }
 #'
 #' @param x numeric sequence
 #' @param y numeric sequence, of equal or shorter length than  \code{x} sequence
@@ -257,10 +304,21 @@ RunningCov = function(x, y, circular = FALSE){
 #' The length of a window is equal to the shorter of the two sequences (\code{y}), and window
 #' "runs" over the length of longer sequence (\code{x}).
 #'
-#' Parameter \code{circular} determines whether \code{x} sequence is assumed to
-#' have a  circular nature. Assume \eqn{l_x} is the length of longer sequence \code{x}, \eqn{l_y} is the length of shorter sequence \code{y}.
-#' * If \code{circular} equals \code{TRUE}, then the output sequence has length equal to the length of \code{x} sequence. First element of the output sequence corresponds to correlation between \code{x[1:l_y]} window of  \code{x} sequence and \code{y} sequence.  Last  element of the output sequence corresponds to correlation between \code{x[(l_x):(l_y - 1)]} window of  \code{x} sequence and \code{y} sequence.
-#' * If \code{circular} equals \code{FALSE}, then the output sequence has length equal to  \eqn{l_x - l_y + 1}. First element of the output sequence corresponds to correlation between \code{x[1:l_y]} window of  \code{x} sequence and \code{y} sequence. Last  element of the output sequence corresponds to correlation between \code{x[(l_x - l_y + 1):l_x]} window of  \code{x} sequence and \code{y} sequence.
+#' Parameter \code{circular} determines whether \code{x} sequence is assumed to have a  circular nature. Assume \eqn{l_x} is the length of sequence \code{x}, \eqn{l_y} is the length of shorter sequence \code{y}.
+#'
+#' If \code{circular} equals \code{TRUE} then
+#'   \itemize{
+#'     \item output sequence length equals \eqn{l_x},
+#'     \item first element of the output sequence corresponds to sample correlation between \code{x[1:l_y]} and \code{y},
+#'     \item last element of the output sequence corresponds to sample correlation between \code{c(x[l_x], x[1:(l_y - 1)])}  and \code{y}.
+#'   }
+#'
+#' If \code{circular} equals \code{FALSE} then
+#'   \itemize{
+#'     \item output sequence length equals \eqn{l_x - l_y + 1},
+#'     \item first element of the output sequence corresponds to sample correlation between \code{x[1:l_y]} and \code{y},
+#'     \item last element of the output sequence corresponds to sample correlation between \code{x[(l_x - l_y + 1):l_x]}.
+#'   }
 #'
 #' @param x numeric sequence
 #' @param y numeric sequence, of equal or shorter length than  \code{x} sequence
@@ -314,10 +372,21 @@ RunningCorr = function(x, y, circular = FALSE){
 #' The length of a window is equal to the shorter of the two sequences (\code{y}), and window
 #' "runs" over the length of longer sequence (\code{x}).
 #'
-#' Parameter \code{circular} determines whether \code{x} sequence is assumed to
-#' have a  circular nature. Assume \eqn{l_x} is the length of longer sequence \code{x}, \eqn{l_y} is the length of shorter sequence \code{y}.
-#' * If \code{circular} equals \code{TRUE}, then the output sequence has length equal to the length of \code{x} sequence. First element of the output sequence corresponds to  L2 norm  between \code{x[1:l_y]} window of  \code{x} sequence and \code{y} sequence.  Last  element of the output sequence corresponds to  L2 norm  between \code{x[(l_x):(l_y - 1)]} window of  \code{x} sequence and \code{y} sequence.
-#' * If \code{circular} equals \code{FALSE}, then the output sequence has length equal to  \eqn{l_x - l_y + 1}. First element of the output sequence corresponds to  L2 norm  between \code{x[1:l_y]} window of  \code{x} sequence and \code{y} sequence. Last  element of the output sequence corresponds to  L2 norm  between \code{x[(l_x - l_y + 1):l_x]} window of  \code{x} sequence and \code{y} sequence.
+#' Parameter \code{circular} determines whether \code{x} sequence is assumed to have a  circular nature. Assume \eqn{l_x} is the length of sequence \code{x}, \eqn{l_y} is the length of shorter sequence \code{y}.
+#'
+#' If \code{circular} equals \code{TRUE} then
+#'   \itemize{
+#'     \item output sequence length equals \eqn{l_x},
+#'     \item first element of the output sequence corresponds to sample L2 norm between \code{x[1:l_y]} and \code{y},
+#'     \item last element of the output sequence corresponds to sample L2 norm between \code{c(x[l_x], x[1:(l_y - 1)])}  and \code{y}.
+#'   }
+#'
+#' If \code{circular} equals \code{FALSE} then
+#'   \itemize{
+#'     \item output sequence length equals \eqn{l_x - l_y + 1},
+#'     \item first element of the output sequence corresponds to sample L2 norm between \code{x[1:l_y]} and \code{y},
+#'     \item last element of the output sequence corresponds to sample L2 norm between \code{x[(l_x - l_y + 1):l_x]}.
+#'   }
 #'
 #' @param x numeric sequence
 #' @param y numeric sequence, of equal or shorter length than  \code{x} sequence
@@ -368,16 +437,16 @@ RunningL2Norm <- function(x, y, circular = FALSE){
 #' Bandpass Digital Filter
 #'
 #' @description
-#' Passes frequencies within a certain range and rejects (attenuates) frequencies
-#' outside that range.
+#' Bandpass digital filter; passes frequencies within a certain range and
+#' rejects frequencies outside that range.
 #'
 #' @param x numeric sequence
-#' @param fs sampling frequency of numeric sequence \code{x}
+#' @param fs sampling frequency of a numeric sequence \code{x}
 #' @param LD lower bandpass frequency
 #' @param LU higher bandpass frequency
 #'
 #' @examples
-#' ## generate components of signal x
+#' ## generate components of a signal x
 #' fs <- 1000
 #' t.seq <- seq(0, 1, length.out = 1000)
 #' x1 <- sin(2 * pi * t.seq * 50)

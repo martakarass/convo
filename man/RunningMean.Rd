@@ -22,9 +22,21 @@ Computes running sample mean of a sequence in a fixed width window. Uses
 convolution via Fast Fourier Transform.
 }
 \details{
-Parameter \code{circular} determines whether \code{x} sequence is assumed to have a  circular nature. Assume \eqn{l_x} is the length of sequence \code{x}, \code{W} is a fixed length of code{x} sequence window.
-* If \code{circular} equals \code{TRUE}, then the output sequence has length equal to the length of \code{x} sequence. First element of the output sequence corresponds to sample mean of \code{x[1:W]} window of  \code{x} sequence.  Last  element of the output sequence corresponds to sample mean of \code{x[(l_x):(W - 1)]} window of  \code{x} sequence.
-* If \code{circular} equals \code{FALSE}, then the output sequence has length equal to  \eqn{l_x - W + 1}. First element of the output sequence corresponds to sample mean of  \code{x[1:W]} window of  \code{x} sequence. Last  element of the output sequence corresponds to sample mean of \code{x[(l_x - W + 1):l_x]} window of  \code{x} sequence.
+Parameter \code{circular} determines whether \code{x} sequence is assumed to have a  circular nature. Assume \eqn{l_x} is the length of sequence \code{x}, \code{W} is a fixed length of \code{x} sequence window.
+
+If \code{circular} equals \code{TRUE} then
+  \itemize{
+    \item output sequence length equals \eqn{l_x},
+    \item first element of the output sequence corresponds to sample mean of \code{x[1:W]},
+    \item last element of the output sequence corresponds to sample mean of \code{c(x[l_x], x[1:(W - 1)])}.
+  }
+
+If \code{circular} equals \code{FALSE} then
+  \itemize{
+    \item output sequence length equals \eqn{l_x - W + 1},
+    \item first element of the output sequence corresponds to sample mean of \code{x[1:W]},
+    \item last element of the output sequence corresponds to sample mean of \code{x[(l_x - W + 1):l_x]}.
+  }
 }
 \examples{
 x <- rnorm(1000)

@@ -6,14 +6,7 @@ Authors@R: c(
   person("Marta", "Karas", email = "mkaras2@jhu.edu", role = c("aut", "cre")),
   person("Jacek", "Urbanek", role = c("aut"))
   )
-Description: Provides methods for fast computation of running (aka rolling) 
-    sample statistics. These include running sample mean of a 
-    single numeric sequence, running sample variance of a single numeric 
-    sequence, running sample covariance of two numeric sequences. 
-    Implementation of the methods uses convolution via Fast Fourier 
-    Transform. From Convolution Theorem, the complexity of the 
-    convolution can be reduced from O(n^{2}) to O(n\log n) 
-    with fast Fourier transform compared to conventional computation. 
+Description: Provides methods for fast computation of running (aka rolling) sample statistics. These include running sample mean of a single numeric sequence, running sample variance of a single numeric sequence, running sample covariance of two numeric sequences. Implementation of the methods uses convolution via Fast Fourier Transform. The complexity of the convolution can be reduced from O(n^2) to O(n log n)  with fast Fourier transform compared to conventional computation. 
 License: GPL-3
 Imports: 
     stats

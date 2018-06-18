@@ -9,18 +9,18 @@ DigFilter(x, fs, LD, LU)
 \arguments{
 \item{x}{numeric sequence}
 
-\item{fs}{sampling frequency of numeric sequence \code{x}}
+\item{fs}{sampling frequency of a numeric sequence \code{x}}
 
 \item{LD}{lower bandpass frequency}
 
 \item{LU}{higher bandpass frequency}
 }
 \description{
-Passes frequencies within a certain range and rejects (attenuates) frequencies
-outside that range.
+Bandpass digital filter; passes frequencies within a certain range and
+rejects frequencies outside that range.
 }
 \examples{
-## generate components of signal x
+## generate components of a signal x
 fs <- 1000
 t.seq <- seq(0, 1, length.out = 1000)
 x1 <- sin(2 * pi * t.seq * 50)
