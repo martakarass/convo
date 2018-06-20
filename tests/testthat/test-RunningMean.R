@@ -1,9 +1,16 @@
 context("Checking RunningMean")
 
-test_that("Checking mean of RunningMean hasn't changed", {
+test_that("Checking mean of RunningMean hasn't changed  (with circular = TRUE)" , {
   set.seed(20180618)
   x <- rnorm(1000)
-  output <- RunningMean(x, 100)
+  output <- RunningMean(x, 100, circular = TRUE)
+  expect_equal(mean(output), -0.00740616601618133)
+})
+
+test_that("Checking mean of RunningMean hasn't changed  (with circular = FALSE)", {
+  set.seed(20180618)
+  x <- rnorm(1000)
+  output <- RunningMean(x, 100, circular = FALSE)
   expect_equal(mean(output), -0.00971309884119209)
 })
 

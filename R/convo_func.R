@@ -330,13 +330,13 @@ RunningCov = function(x, y, circular = FALSE){
 #' @examples
 #' x <- sin(seq(0, 1, length.out = 1000) * 2 * pi * 6)
 #' y <- x[1:100]
-#' out1 <- RunningCorr(x, y, circular = TRUE)
-#' out2 <- RunningCorr(x, y, circular = FALSE)
+#' out1 <- RunningCor(x, y, circular = TRUE)
+#' out2 <- RunningCor(x, y, circular = FALSE)
 #' plot(out1, type = "l"); points(out2, col = "red")
 #'
 #' @export
 #'
-RunningCorr = function(x, y, circular = FALSE){
+RunningCor = function(x, y, circular = FALSE){
 
   if (length(x) < length(y)) stop("Vector x should be no shorter than vector y")
 
@@ -410,17 +410,15 @@ RunningL2Norm <- function(x, y, circular = FALSE){
   N1 <- length(x)
   N2 <- length(y)
 
-  xz <- append(x, rep(0, nextn(N1, 2) - N1))
-  yz <- append(y, rep(0, nextn(N1, 2) - N2))
+  xz <- x
+  yz <- append(y, rep(0, N1 - N2))
 
   m <- rep(0, length(xz))
   m[1:N2] <- 1
 
-  xfft <- fft(xz)
-  yfft <- fft(yz)
-
-  d <- sqrt(Re(fft(fft(xz^2) * Conj(fft(m)), inverse = T))/length(xz) +
-              sum(y^2) - 2 * Re(fft(fft(xz) * Conj(fft(yz)), inverse = T))/length(xz))
+  d <- convolve(xz^2, m)  - 2 * convolve(xz, yz) + sum(y^2)
+  d[d < 0] <- 0
+  d <- sqrt(d)
   d <- d[1:N1]
 
   ## trim outout tail if not circular

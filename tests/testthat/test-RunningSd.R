@@ -1,0 +1,58 @@
+context("Checking RunningSd")
+
+test_that("Checking mean of RunningSd hasn't changed  (with circular = TRUE)" , {
+  set.seed(20180618)
+  x <- rnorm(1000)
+  output <- RunningSd(x, 100, circular = TRUE)
+  expect_equal(mean(output), 0.990468893492985)
+})
+
+test_that("Checking mean of RunningSd hasn't changed  (with circular = FALSE)", {
+  set.seed(20180618)
+  x <- rnorm(1000)
+  output <- RunningSd(x, 100, circular = FALSE)
+  expect_equal(mean(output), 0.985677717702135)
+})
+
+
+
+RunningSd.CONV <- function(x, W, circular){
+
+  out <- numeric()
+  l_x <- length(x)
+
+  for (i in 1:(l_x - W + 1)){
+    segm <- x[i:(i+W-1)]
+    out  <- c(out, sd(segm))
+  }
+
+  if (circular) {
+    for (i in (l_x - W + 2):l_x){
+      segm <- c(x[i:l_x], x[1:(W-l_x+i-1)])
+      out  <- c(out, sd(segm))
+    }
+  }
+
+  return(out)
+}
+
+
+test_that("Checking RunningSd via FFT returns what is equivalent with conventional computation (with circular = TRUE)", {
+  set.seed(20180618)
+  x <- rnorm(1000)
+  output      <- RunningSd(x, 100, circular = TRUE)
+  output.conv <- RunningSd.CONV(x, 100, circular = TRUE)
+  max.diff    <- max(abs(output - output.conv))
+  expect_equal(max.diff, 0, tolerance = 1e-8)
+})
+
+
+test_that("Checking RunningSd via FFT returns what is equivalent with conventional computation (with circular = FALSE)", {
+  set.seed(20180618)
+  x <- rnorm(1000)
+  output      <- RunningSd(x, 100, circular = FALSE)
+  output.conv <- RunningSd.CONV(x, 100, circular = FALSE)
+  max.diff    <- max(abs(output - output.conv))
+  expect_equal(max.diff, 0, tolerance = 1e-8)
+})
+
