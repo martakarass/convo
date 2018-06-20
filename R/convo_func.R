@@ -410,13 +410,9 @@ RunningL2Norm <- function(x, y, circular = FALSE){
   N1 <- length(x)
   N2 <- length(y)
 
-  xz <- x
-  yz <- append(y, rep(0, N1 - N2))
+  m <- rep(1, N2)
 
-  m <- rep(0, length(xz))
-  m[1:N2] <- 1
-
-  d <- convolve(xz^2, m)  - 2 * convolve(xz, yz) + sum(y^2)
+  d <- convJU(x^2, m)  - 2 * convJU(x, y) + sum(y^2)
   d[d < 0] <- 0
   d <- sqrt(d)
   d <- d[1:N1]
@@ -484,17 +480,4 @@ DigFilter = function(x, fs, LD, LU){
 
   return(xf)
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
 
