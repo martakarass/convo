@@ -21,16 +21,17 @@ RunningVar.CONV <- function(x, W, circular){
   out <- numeric()
   l_x <- length(x)
 
-  for (i in 1:(l_x - W + 1)){
+  out <- sapply(1:(l_x - W + 1), function(i){
     segm <- x[i:(i+W-1)]
-    out  <- c(out, var(segm))
-  }
+    var(segm)
+  })
 
   if (circular) {
-    for (i in (l_x - W + 2):l_x){
+    out.tail <- sapply((l_x - W + 2):l_x, function(i){
       segm <- c(x[i:l_x], x[1:(W-l_x+i-1)])
-      out  <- c(out, var(segm))
-    }
+      var(segm)
+    })
+    out <- c(out, out.tail)
   }
 
   return(out)
