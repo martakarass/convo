@@ -43,13 +43,12 @@ convJU <- function(x, y){
   N2 <- length(y)
   if (N2 > N1) stop("y must be of shorter of equal length than x")
 
-  xz <- x
-  yz <- append(y, rep(0, N1 - N2))
+  y0 <- append(y, rep(0, N1 - N2))
 
-  cxy <- convolve(xz, yz)
-  cxy <- cxy[1:N1]
+  out <- convolve(x, y0)
+  out <- out[1:N1]
 
-  return(cxy)
+  return(out)
 }
 
 
@@ -463,7 +462,7 @@ RunningL2Norm <- function(x, y, circular = FALSE){
 #'
 DigFilter = function(x, fs, LD, LU){
 
-  x[is.na(x)] <- 0
+  # x[is.na(x)] <- 0
   N0 <- length(x)
   Nz <- 2^ceiling(log2(N0))
   x <- c(x, rep(0, Nz - N0)) # zero padding   df = fs/N
