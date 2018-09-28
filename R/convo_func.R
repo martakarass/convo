@@ -60,37 +60,38 @@ convJU <- function(x, y){
 #'
 #' @description
 #' Computes running sample mean of a sequence in a fixed width window. Uses
-#' convolution via Fast Fourier Transform.
+#' convolution implementation via Fast Fourier Transform.
 #'
 #' @details
-#' Parameter \code{circular} determines whether \code{x} sequence is assumed to have a  circular nature. Assume \eqn{l_x} is the length of sequence \code{x}, \code{W} is a fixed length of \code{x} sequence window.
+#' The length of output vector equals the length of \code{x} vector.
+#' Parameter \code{circular} determines whether \code{x} sequence is assumed to have a  circular nature.
+#' Assume \eqn{l_x} is the length of sequence \code{x}, \code{W} is a fixed length of \code{x} sequence window.
 #'
 #' If \code{circular} equals \code{TRUE} then
 #'   \itemize{
-#'     \item output sequence length equals \eqn{l_x},
 #'     \item first element of the output sequence corresponds to sample mean of \code{x[1:W]},
 #'     \item last element of the output sequence corresponds to sample mean of \code{c(x[l_x], x[1:(W - 1)])}.
 #'   }
 #'
 #' If \code{circular} equals \code{FALSE} then
 #'   \itemize{
-#'     \item output sequence length equals \eqn{l_x - W + 1},
 #'     \item first element of the output sequence corresponds to sample mean of \code{x[1:W]},
-#'     \item last element of the output sequence corresponds to sample mean of \code{x[(l_x - W + 1):l_x]}.
+#'     \item \eqn{l_x - W + 1}-th element of the output sequence corresponds to
+#'     sample mean of \code{x[(l_x - W + 1):l_x]},
+#'     \item last  \code{W-1} elements of the output sequence are filled with \code{NA}.
 #'   }
 #'
-#' @param x numeric sequence
-#' @param W numeric; width of \code{x} sequence window
-#' @param circular logical; whether running sample mean is computed assuming
-#' circular nature of  \code{x} sequence (see Details)
+#' @param x A numeric vector.
+#' @param W A numeric scalar; width of \code{x} sequence window.
+#' @param circular :ogical; whether running sample mean is computed assuming
+#' circular nature of  \code{x} sequence (see Details).
 #'
-#' @return numeric sequence
+#' @return A numeric vector.
 #'
 #' @examples
-#' x <- rnorm(1000)
-#' RunningMean(x, 100)
-#' length(RunningMean(x, 100, circular = FALSE))
-#' length(RunningMean(x, 100, circular = TRUE))
+#' x <- rnorm(10)
+#' RunningMean(x, 3, circular = FALSE)
+#' RunningMean(x, 3, circular = TRUE)
 #'
 #' @export
 #'
@@ -103,7 +104,7 @@ RunningMean <- function(x, W, circular = FALSE){
   meanx <- convJU(x, win)/W
 
   ## trim outout tail if not circular
-  if (!circular) meanx <- meanx[1 : (length(x) - W + 1)]
+  if (!circular) meanx[(length(x) - W + 2) : length(x)] <- NA
 
   return(meanx)
 }
