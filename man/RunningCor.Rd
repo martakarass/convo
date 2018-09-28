@@ -7,15 +7,15 @@
 RunningCor(x, y, circular = FALSE)
 }
 \arguments{
-\item{x}{numeric sequence}
+\item{x}{A numeric vector.}
 
-\item{y}{numeric sequence, of equal or shorter length than  \code{x} sequence}
+\item{y}{A numeric vector, of equal or shorter length than  \code{x} sequence.}
 
 \item{circular}{logical; whether  running correlation is computed assuming
-circular nature of  \code{x} sequence (see Details)}
+circular nature of  \code{x} sequence (see Details).}
 }
 \value{
-numeric sequence
+A numeric vector.
 }
 \description{
 Computes running correlation between two sequences in a fixed width window,
@@ -27,20 +27,20 @@ Computes running correlation between two sequences in a fixed width window.
 The length of a window is equal to the shorter of the two sequences (\code{y}), and window
 "runs" over the length of longer sequence (\code{x}).
 
+The length of output vector equals the length of \code{x} vector.
 Parameter \code{circular} determines whether \code{x} sequence is assumed to have a  circular nature. Assume \eqn{l_x} is the length of sequence \code{x}, \eqn{l_y} is the length of shorter sequence \code{y}.
 
 If \code{circular} equals \code{TRUE} then
   \itemize{
-    \item output sequence length equals \eqn{l_x},
     \item first element of the output sequence corresponds to sample correlation between \code{x[1:l_y]} and \code{y},
     \item last element of the output sequence corresponds to sample correlation between \code{c(x[l_x], x[1:(l_y - 1)])}  and \code{y}.
   }
 
 If \code{circular} equals \code{FALSE} then
   \itemize{
-    \item output sequence length equals \eqn{l_x - l_y + 1},
     \item first element of the output sequence corresponds to sample correlation between \code{x[1:l_y]} and \code{y},
-    \item last element of the output sequence corresponds to sample correlation between \code{x[(l_x - l_y + 1):l_x]}.
+    \item the \eqn{l_x - W + 1}-th element of the output sequence corresponds to sample correlation between \code{x[(l_x - l_y + 1):l_x]},
+    \item last \code{W-1} elements of the output sequence are filled with \code{NA}.
   }
 }
 \examples{

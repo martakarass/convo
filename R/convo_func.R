@@ -78,12 +78,12 @@ convJU <- function(x, y){
 #'     \item first element of the output sequence corresponds to sample mean of \code{x[1:W]},
 #'     \item \eqn{l_x - W + 1}-th element of the output sequence corresponds to
 #'     sample mean of \code{x[(l_x - W + 1):l_x]},
-#'     \item last  \code{W-1} elements of the output sequence are filled with \code{NA}.
+#'     \item last \code{W-1} elements of the output sequence are filled with \code{NA}.
 #'   }
 #'
 #' @param x A numeric vector.
-#' @param W A numeric scalar; width of \code{x} sequence window.
-#' @param circular :ogical; whether running sample mean is computed assuming
+#' @param W A numeric scalar; width of \code{x} window over which sample mean is computed.
+#' @param circular Logical; whether running sample mean is computed assuming
 #' circular nature of  \code{x} sequence (see Details).
 #'
 #' @return A numeric vector.
@@ -116,37 +116,38 @@ RunningMean <- function(x, W, circular = FALSE){
 #'
 #' @description
 #' Computes running sample variance of a sequence in a fixed width window. Uses
-#' convolution via Fast Fourier Transform.
+#' convolution implementation via Fast Fourier Transform.
 #'
 #' @details
-#' Parameter \code{circular} determines whether \code{x} sequence is assumed to have a  circular nature. Assume \eqn{l_x} is the length of sequence \code{x}, \code{W} is a fixed length of \code{x} sequence window.
+#' The length of output vector equals the length of \code{x} vector.
+#' Parameter \code{circular} determines whether \code{x} sequence is assumed to have a  circular nature.
+#' Assume \eqn{l_x} is the length of sequence \code{x}, \code{W} is a fixed length of \code{x} sequence window.
 #'
 #' If \code{circular} equals \code{TRUE} then
 #'   \itemize{
-#'     \item output sequence length equals \eqn{l_x},
 #'     \item first element of the output sequence corresponds to sample variance of \code{x[1:W]},
 #'     \item last element of the output sequence corresponds to sample variance of \code{c(x[l_x], x[1:(W - 1)])}.
 #'   }
 #'
 #' If \code{circular} equals \code{FALSE} then
 #'   \itemize{
-#'     \item output sequence length equals \eqn{l_x - W + 1},
 #'     \item first element of the output sequence corresponds to sample variance of \code{x[1:W]},
-#'     \item last element of the output sequence corresponds to sample variance of \code{x[(l_x - W + 1):l_x]}.
+#'     \item the \eqn{l_x - W + 1}-th element of the output sequence corresponds to sample variance of \code{x[(l_x - W + 1):l_x]},
+#'     \item last \code{W-1} elements of the output sequence are filled with \code{NA}.
 #'   }
 #'
-#' @param x numeric sequence
-#' @param W numeric; width of \code{x} sequence window
-#' @param circular logical; whether running sample variance is computed assuming
-#' circular nature of  \code{x} sequence (see Details)
+#' @param x A numeric vector.
+#' @param W A numeric scalar; width of \code{x} window over which sample variance is computed.
+#' @param circular Logical; whether running sample variance is computed assuming
+#' circular nature of  \code{x} sequence (see Details).
 #'
-#' @return numeric sequence
+#' @return A numeric vector.
 #'
 #' @examples
-#' x <- rnorm(1000)
-#' RunningVar(x, 100)
-#' length(RunningVar(x, 100, circular = FALSE))
-#' length(RunningVar(x, 100, circular = TRUE))
+#' x <- rnorm(10)
+#' RunningVar(x, W = 3, circular = FALSE)
+#' RunningVar(x, W = 3, circular = TRUE)
+
 #'
 #' @export
 #'
@@ -162,8 +163,7 @@ RunningVar <- function(x, W, circular = FALSE){
   ## correct numerical errors, if any
   sigmax2[sigmax2 < 0] <- 0
 
-  ## trim outout tail if not circular
-  if (!circular) sigmax2 <- sigmax2[1 : (length(x) - W + 1)]
+  if (!circular) sigmax2[(length(x) - W + 2) : length(x)] <- NA
 
   return(sigmax2)
 }
@@ -176,37 +176,37 @@ RunningVar <- function(x, W, circular = FALSE){
 #'
 #' @description
 #' Computes running sample standard deviation of a sequence in a fixed width window. Uses
-#' convolution via Fast Fourier Transform.
+#' convolution implementation via Fast Fourier Transform.
 #'
 #' @details
-#' Parameter \code{circular} determines whether \code{x} sequence is assumed to have a  circular nature. Assume \eqn{l_x} is the length of sequence \code{x}, \code{W} is a fixed length of \code{x} sequence window.
+#' The length of output vector equals the length of \code{x} vector.
+#' Parameter \code{circular} determines whether \code{x} sequence is assumed to have a  circular nature.
+#' Assume \eqn{l_x} is the length of sequence \code{x}, \code{W} is a fixed length of \code{x} sequence window.
 #'
 #' If \code{circular} equals \code{TRUE} then
 #'   \itemize{
-#'     \item output sequence length equals \eqn{l_x},
 #'     \item first element of the output sequence corresponds to sample standard deviation of \code{x[1:W]},
 #'     \item last element of the output sequence corresponds to sample standard deviation of \code{c(x[l_x], x[1:(W - 1)])}.
 #'   }
 #'
 #' If \code{circular} equals \code{FALSE} then
 #'   \itemize{
-#'     \item output sequence length equals \eqn{l_x - W + 1},
 #'     \item first element of the output sequence corresponds to sample standard deviation of \code{x[1:W]},
-#'     \item last element of the output sequence corresponds to sample standard deviation of \code{x[(l_x - W + 1):l_x]}.
+#'     \item the \eqn{l_x - W + 1}-th element of the output sequence corresponds to sample standard deviation of \code{x[(l_x - W + 1):l_x]},
+#'     \item last \code{W-1} elements of the output sequence are filled with \code{NA}.
 #'   }
 #'
-#' @param x numeric sequence
-#' @param W numeric; width of \code{x} sequence window
-#' @param circular logical; whether  running sample standard deviation is computed assuming
-#' circular nature of  \code{x} sequence (see Details)
+#' @param x A numeric vector.
+#' @param W A numeric scalar; width of \code{x} window over which sample variance is computed.
+#' @param circular Logical; whether  running sample standard deviation is computed assuming
+#' circular nature of  \code{x} sequence (see Details).
 #'
-#' @return numeric sequence
+#' @return A numeric vector.
 #'
 #' @examples
-#' x <- rnorm(1000)
-#' RunningSd(x, 100)
-#' length(RunningSd(x, 100, circular = FALSE))
-#' length(RunningSd(x, 100, circular = TRUE))
+#' x <- rnorm(10)
+#' RunningSd(x, 3, circular = FALSE)
+#' RunningSd(x, 3, circular = FALSE)
 #'
 #' @export
 #'
@@ -227,35 +227,38 @@ RunningSd <- function(x, W, circular = FALSE){
 #' @description
 #' Computes running covariance between two sequences in a fixed width window,
 #' whose length corresponds to the length of the shorter sequence.  Uses
-#' convolution via Fast Fourier Transform.
+#' convolution implementation via Fast Fourier Transform.
 #'
 #' @details
 #' Computes running covariance between two sequences in a fixed width window.
 #' The length of a window is equal to the shorter of the two sequences (\code{y}), and window
 #' "runs" over the length of longer sequence (\code{x}).
 #'
-#' Parameter \code{circular} determines whether \code{x} sequence is assumed to have a  circular nature. Assume \eqn{l_x} is the length of sequence \code{x}, \eqn{l_y} is the length of shorter sequence \code{y}.
+#' The length of output vector equals the length of \code{x} vector.
+#' Parameter \code{circular} determines whether \code{x} sequence is assumed to have a  circular nature.
+#' Assume \eqn{l_x} is the length of sequence \code{x}, \eqn{l_y} is the length of shorter sequence \code{y}.
 #'
 #'   If \code{circular} equals \code{TRUE} then
 #'   \itemize{
-#'     \item output sequence length equals \eqn{l_x},
 #'     \item first element of the output sequence corresponds to sample covariance between \code{x[1:l_y]} and \code{y},
 #'     \item last element of the output sequence corresponds to sample covariance between \code{c(x[l_x], x[1:(l_y - 1)])}  and \code{y}.
 #'   }
 #'
 #' If \code{circular} equals \code{FALSE} then
 #'   \itemize{
-#'     \item output sequence length equals \eqn{l_x - l_y + 1},
 #'     \item first element of the output sequence corresponds to sample covariance between \code{x[1:l_y]} and \code{y},
-#'     \item last element of the output sequence corresponds to sample covariance between \code{x[(l_x - l_y + 1):l_x]}.
+#'     \item the \eqn{l_x - W + 1}-th last element of the output sequence corresponds to sample covariance between \code{x[(l_x - l_y + 1):l_x]},
+#'     \item last \code{W-1} elements of the output sequence are filled with \code{NA}.
+
 #'   }
 #'
-#' @param x numeric sequence
-#' @param y numeric sequence, of equal or shorter length than  \code{x} sequence
-#' @param circular logical; whether  running variance is computed assuming
-#' circular nature of  \code{x} sequence (see Details)
+#' @param x A numeric vector.
+#' @param y A numeric vector, of equal or shorter length than  \code{x} sequence.
+#' @param circular Logical; whether  running variance is computed assuming
+#' circular nature of  \code{x} sequence (see Details).
 #'
-#' @return numeric sequence
+#' @return A numeric vector.
+#'
 #' @import stats
 #'
 #' @examples
@@ -283,7 +286,7 @@ RunningCov = function(x, y, circular = FALSE){
   covxy <- (convJU(x, y) - W * meanx * meany)/(W - 1)
 
   ## trim outout tail if not circular
-  if (!circular) covxy <- covxy[1 : (length(x) - W + 1)]
+  if (!circular) covxy[(length(x) - W + 2) : length(x)] <- NA
 
   return(covxy)
 }
@@ -304,28 +307,28 @@ RunningCov = function(x, y, circular = FALSE){
 #' The length of a window is equal to the shorter of the two sequences (\code{y}), and window
 #' "runs" over the length of longer sequence (\code{x}).
 #'
+#' The length of output vector equals the length of \code{x} vector.
 #' Parameter \code{circular} determines whether \code{x} sequence is assumed to have a  circular nature. Assume \eqn{l_x} is the length of sequence \code{x}, \eqn{l_y} is the length of shorter sequence \code{y}.
 #'
 #' If \code{circular} equals \code{TRUE} then
 #'   \itemize{
-#'     \item output sequence length equals \eqn{l_x},
 #'     \item first element of the output sequence corresponds to sample correlation between \code{x[1:l_y]} and \code{y},
 #'     \item last element of the output sequence corresponds to sample correlation between \code{c(x[l_x], x[1:(l_y - 1)])}  and \code{y}.
 #'   }
 #'
 #' If \code{circular} equals \code{FALSE} then
 #'   \itemize{
-#'     \item output sequence length equals \eqn{l_x - l_y + 1},
 #'     \item first element of the output sequence corresponds to sample correlation between \code{x[1:l_y]} and \code{y},
-#'     \item last element of the output sequence corresponds to sample correlation between \code{x[(l_x - l_y + 1):l_x]}.
+#'     \item the \eqn{l_x - W + 1}-th element of the output sequence corresponds to sample correlation between \code{x[(l_x - l_y + 1):l_x]},
+#'     \item last \code{W-1} elements of the output sequence are filled with \code{NA}.
 #'   }
 #'
-#' @param x numeric sequence
-#' @param y numeric sequence, of equal or shorter length than  \code{x} sequence
+#' @param x A numeric vector.
+#' @param y A numeric vector, of equal or shorter length than  \code{x} sequence.
 #' @param circular logical; whether  running correlation is computed assuming
-#' circular nature of  \code{x} sequence (see Details)
+#' circular nature of  \code{x} sequence (see Details).
 #'
-#' @return numeric sequence
+#' @return A numeric vector.
 #'
 #' @examples
 #' x <- sin(seq(0, 1, length.out = 1000) * 2 * pi * 6)
@@ -372,37 +375,44 @@ RunningCor = function(x, y, circular = FALSE){
 #' The length of a window is equal to the shorter of the two sequences (\code{y}), and window
 #' "runs" over the length of longer sequence (\code{x}).
 #'
-#' Parameter \code{circular} determines whether \code{x} sequence is assumed to have a  circular nature. Assume \eqn{l_x} is the length of sequence \code{x}, \eqn{l_y} is the length of shorter sequence \code{y}.
+#' The length of output vector equals the length of \code{x} vector.
+#' Parameter \code{circular} determines whether \code{x} sequence is assumed to have a  circular nature.
+#' Assume \eqn{l_x} is the length of sequence \code{x}, \eqn{l_y} is the length of shorter sequence \code{y}.
 #'
 #' If \code{circular} equals \code{TRUE} then
 #'   \itemize{
-#'     \item output sequence length equals \eqn{l_x},
 #'     \item first element of the output sequence corresponds to sample L2 norm between \code{x[1:l_y]} and \code{y},
 #'     \item last element of the output sequence corresponds to sample L2 norm between \code{c(x[l_x], x[1:(l_y - 1)])}  and \code{y}.
 #'   }
 #'
 #' If \code{circular} equals \code{FALSE} then
 #'   \itemize{
-#'     \item output sequence length equals \eqn{l_x - l_y + 1},
 #'     \item first element of the output sequence corresponds to sample L2 norm between \code{x[1:l_y]} and \code{y},
-#'     \item last element of the output sequence corresponds to sample L2 norm between \code{x[(l_x - l_y + 1):l_x]}.
+#'     \item the \eqn{l_x - W + 1}-th element of the output sequence corresponds to sample L2 norm between \code{x[(l_x - l_y + 1):l_x]},
+#'     \item last \code{W-1} elements of the output sequence are filled with \code{NA}.
 #'   }
 #'
-#' @param x numeric sequence
-#' @param y numeric sequence, of equal or shorter length than  \code{x} sequence
+#' @param x A numeric vector.
+#' @param y A numeric vector, of equal or shorter length than  \code{x} sequence
 #' @param circular logical; whether  running  L2 norm  is computed assuming
 #' circular nature of  \code{x} sequence (see Details)
 #'
-#' @return numeric sequence
+#' @return A numeric vector.
 #'
 #' @examples
+#' ## Ex.1.
 #' x <- sin(seq(0, 1, length.out = 1000) * 2 * pi * 6)
 #' y1 <- x[1:100] + rnorm(100)
 #' y2 <- rnorm(100)
 #' out1 <- RunningL2Norm(x, y1)
 #' out2 <- RunningL2Norm(x, y2)
 #' plot(out1, type = "l"); points(out2, col = "blue")
-#'
+#' ## Ex.2.
+#' x <- sin(seq(0, 1, length.out = 1000) * 2 * pi * 6)
+#' y <- x[1:100] + rnorm(100)
+#' out1 <- RunningL2Norm(x, y, circular = TRUE)
+#' out2 <- RunningL2Norm(x, y, circular = FALSE)
+#' plot(out1, type = "l"); points(out2, col = "red")
 #' @export
 #'
 RunningL2Norm <- function(x, y, circular = FALSE){
@@ -418,7 +428,7 @@ RunningL2Norm <- function(x, y, circular = FALSE){
   d <- d[1:N1]
 
   ## trim outout tail if not circular
-  if (!circular) d <- d[1 : (length(x) - length(y) + 1)]
+  if (!circular) d[(N1 - N2 + 2) : N1] <- NA
 
   return(d)
 }

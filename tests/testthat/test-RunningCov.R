@@ -17,20 +17,11 @@ RunningCov.CONV <- function(x, y, circular){
       segm <- c(x[i:l_x], x[1:(W-l_x+i-1)])
       cov(segm, y)
     })
-    out <- c(out, out.tail)
+  } else {
+    out.tail <- rep(NA, W-1)
   }
 
-  # for (i in 1:(l_x - W + 1)){
-  #   segm <- x[i:(i+W-1)]
-  #   out  <- c(out, cov(segm, y))
-  # }
-  #
-  # if (circular) {
-  #   for (i in (l_x - W + 2):l_x){
-  #     segm <- c(x[i:l_x], x[1:(W-l_x+i-1)])
-  #     out  <- c(out, cov(segm, y))
-  #   }
-  # }
+  out <- c(out, out.tail)
 
   return(out)
 }
@@ -47,11 +38,19 @@ test_that("Checking RunningCov via FFT returns what is equivalent with conventio
 
 
 test_that("Checking RunningCov via FFT returns what is equivalent with conventional computation (with circular = FALSE)", {
+
   x <- sin(seq(0, 1, length.out = 1000) * 2 * pi * 6)
   y <- x[1:100]
+
   output      <- RunningCov(x, y, circular = FALSE)
   output.conv <- RunningCov.CONV(x, y, circular = FALSE)
-  max.diff    <- max(abs(output - output.conv))
+
+  expect_true(all(is.na(output) == is.na(output.conv)))
+
+  max.diff    <- max(abs(output - output.conv), na.rm = TRUE)
   expect_equal(max.diff, 0, tolerance = 1e-8)
+
+  expect_true(all(is.na(output) == is.na(output.conv)))
+
 })
 

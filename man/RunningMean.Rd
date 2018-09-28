@@ -9,9 +9,9 @@ RunningMean(x, W, circular = FALSE)
 \arguments{
 \item{x}{A numeric vector.}
 
-\item{W}{A numeric scalar; width of \code{x} sequence window.}
+\item{W}{A numeric scalar; width of \code{x} window over which sample mean is computed.}
 
-\item{circular}{:ogical; whether running sample mean is computed assuming
+\item{circular}{Logical; whether running sample mean is computed assuming
 circular nature of  \code{x} sequence (see Details).}
 }
 \value{
@@ -37,7 +37,7 @@ If \code{circular} equals \code{FALSE} then
     \item first element of the output sequence corresponds to sample mean of \code{x[1:W]},
     \item \eqn{l_x - W + 1}-th element of the output sequence corresponds to
     sample mean of \code{x[(l_x - W + 1):l_x]},
-    \item last  \code{W-1} elements of the output sequence are filled with \code{NA}.
+    \item last \code{W-1} elements of the output sequence are filled with \code{NA}.
   }
 }
 \examples{
